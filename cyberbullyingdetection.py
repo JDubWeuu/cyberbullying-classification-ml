@@ -39,7 +39,9 @@ padded_sequences = pad_sequences(sequences)
 encoder = LabelEncoder()
 df['cyberbullying_type'] = encoder.fit_transform(df['cyberbullying_type'])
 labels = df['cyberbullying_type']
+
 X_train, X_test, Y_train, Y_test = train_test_split(padded_sequences, labels, test_size=0.2, random_state=42)
+
 model = tf.keras.Sequential([
     Embedding(10000, 128, input_length=padded_sequences.shape[1]),
     SpatialDropout1D(0.4),
@@ -49,5 +51,10 @@ model = tf.keras.Sequential([
     ])
 
 model.compile(loss = 'sparse_categorical_crossentropy', optimizer='adam', metrics = ['accuracy'])
+
 print(model.summary())
-#model.fit(X_train, Y_train, validation_split=0.1, epochs = 10, batch_size=32, verbose=1)
+
+model.fit(X_train, Y_train, validation_split=0.1, epochs = 10, batch_size=32, verbose=1)
+
+test_loss, test_acc = model.evaluate(X_test, Y_test)
+print(f'Loss: {test_loss}\nAccuracy: {test_acc}')
